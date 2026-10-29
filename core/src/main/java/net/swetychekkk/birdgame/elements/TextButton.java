@@ -42,9 +42,18 @@ public class TextButton {
     }
 
     public void draw(Batch batch) {
-        batch.draw(texture, x, y, buttonWidth, buttonHeight);
-        font.draw(batch, text, textX, textY);
+        batch.draw(texture, x-buttonWidth/2, y, buttonWidth, buttonHeight);
+        font.draw(batch, text, textX-buttonWidth/2, textY);
     }
+    public boolean isHit(int tx, int ty) {
+        int left   = x - buttonWidth;
+        int right  = x + buttonWidth;
+        int bottom = y;
+        int top    = y + buttonHeight;
+        return tx >= left && tx <= right
+            && ty >= bottom && ty <= top;
+    }
+
 
     public void dispose() {
         texture.dispose();

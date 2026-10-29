@@ -52,13 +52,24 @@ public class ScreenGame implements Screen {
     @Override
     public void show() {
         isGameOver = false;
+        screenTransition = false;   // ← обязательно
         points = 0;
+        tubeSpeed = 200;            // ← сбросить скорость труб
+        deathFade = 0f;
+
+        // Пересоздать птицу
+        bird = new Bird(20, 0, birdTexture, birdSpeed);
+        // или bird.reset(...) если такой метод есть
+
+        // Пересоздать трубы
+        initTubes();
     }
 
     @Override
     public void render(float delta) {
         if (screenTransition) {
             if (bird.y+bird.height<=0) {
+                Main.screenRestart.gamePoints = points;
                 Main.setScreen(Main.screenRestart);
                 return;
             }
