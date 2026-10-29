@@ -36,6 +36,12 @@ public class ScreenGame implements Screen {
     boolean isGameOver;
 
 
+    // Фон для переключения каждые 10 секунд
+    Texture background1;
+    Texture background2;
+    private float bgSwitchTimer = 0f;
+    private boolean useSecond = false;
+
     private boolean screenTransition;
     private float timerToSwitch = 2.5f;
     int points;
@@ -47,6 +53,9 @@ public class ScreenGame implements Screen {
         back = new back(new Texture("background-game.png"), 20);
         bird = new Bird(20,0,birdTexture,birdSpeed);
         pointCounter = new PointCounter(0+pointCounterMarginLeft, SCR_HEIGHT - pointCounterMarginTop);
+        // Загружаем оба фона для переключения (должны быть разными файлами!)
+        background1 = new Texture("background-game.png");
+        background2 = new Texture("background-game2.png");
     }
 
     @Override
@@ -59,7 +68,6 @@ public class ScreenGame implements Screen {
 
         // Пересоздать птицу
         bird = new Bird(20, 0, birdTexture, birdSpeed);
-        // или bird.reset(...) если такой метод есть
 
         // Пересоздать трубы
         initTubes();
@@ -96,6 +104,17 @@ public class ScreenGame implements Screen {
             if (tube.isHit(bird)) isGameOver = true; else if (tube.isPointAdd(bird)) points++;
         }
 
+        // --- Плавный переключатель фона каждые 10 секунд ---
+        bgSwitchTimer += delta;
+        if (bgSwitchTimer >= 15f) {
+            useSecond = !useSecond;
+            bgSwitchTimer = 0f;
+            if (useSecond) {
+                back.changeBackground(background2, 1.5f);
+            } else {
+                back.changeBackground(background1, 1.5f);
+            }
+        }
 
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
@@ -129,6 +148,8 @@ public class ScreenGame implements Screen {
     @Override
     public void dispose() {
         birdTexture.dispose();
+        if (background1 != null) background1.dispose();
+        if (background2 != null) background2.dispose();
         for (int i=0; i<tubeCount; i++) {
             tubes[i].dispose();
         }
